@@ -45,4 +45,6 @@ public class Eventos implements Serializable{
     @Column(name="fechaevento",nullable=false)
     private LocalDate fechaevento;
     
+    @Column(name="capacidad",nullable=false)
+    private int capacidad;
 }
