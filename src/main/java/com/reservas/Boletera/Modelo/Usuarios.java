@@ -45,14 +45,14 @@ public class Usuarios implements Serializable{
     @Column(name="email")
     private String email;
     
-    @Column(name="fechaRegistro",nullable=false)
-    private LocalDate fechaRegistro;
+    @Column(name="fecharegistro")
+    private LocalDate fecharegistro;
     
     @Column(name="privilegio")
     private String privilegio;
     
     @PrePersist
     public void prePersist(){
-        fechaRegistro=LocalDate.now();
+        fecharegistro=LocalDate.now();
     }
 }

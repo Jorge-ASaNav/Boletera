@@ -16,17 +16,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class EventoDTO {
-    private int id;
+    private int idevento;
     private String titulo;
     private String descripcion;
-    private LocalDate fecha;
+    private LocalDate fechaevento;
     private int capacidad;
     
     public EventoDTO(Eventos evento){
-        this.id=evento.getIdevento();
+        this.idevento=evento.getIdevento();
         this.titulo=evento.getTitulo();
         this.descripcion=evento.getDescripcion();
-        this.fecha=evento.getFechaevento();
+        this.fechaevento=evento.getFechaevento();
         this.capacidad=evento.getCapacidad();
     }
 }

@@ -5,8 +5,12 @@
 package com.reservas.Boletera.Controlador;
 
 import com.reservas.Boletera.DTO.ReservasDTO;
+import com.reservas.Boletera.Modelo.Eventos;
 import com.reservas.Boletera.Modelo.Reservas;
+import com.reservas.Boletera.Modelo.Usuarios;
+import com.reservas.Boletera.Servicio.IEventoServicio;
 import com.reservas.Boletera.Servicio.IReservaServicio;
+import com.reservas.Boletera.Servicio.IUsuarioServicio;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +35,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReservasControlador {
     
     private final IReservaServicio reServ;
+    private final IUsuarioServicio uServ;
+    private final IEventoServicio eveServ;
     
-    public ReservasControlador(IReservaServicio reServ){
+    public ReservasControlador(IReservaServicio reServ,IUsuarioServicio uServ,IEventoServicio eveServ){
         this.reServ=reServ;
+        this.uServ=uServ;
+        this.eveServ=eveServ;
     }
     
     private final Logger logger=LoggerFactory.getLogger(ReservasControlador.class);
@@ -47,8 +55,18 @@ public class ReservasControlador {
     }
     
     @PostMapping("/reservas")
-    public Reservas guardarReserva(@RequestBody Reservas reserva){
-        return reServ.guardarReserva(reserva);
+    public ReservasDTO guardarReserva(@RequestBody ReservasDTO reserva){
+        Usuarios usuario=uServ.obtenerUsuarioPorId(reserva.getIdUsuario()).orElseThrow(()->new RuntimeException("No hay usuario en BD"));
+        Eventos evento=eveServ.buscarEventoPorId(reserva.getIdEvento()).orElseThrow(()-> new RuntimeException("No hay evento"));
+        Reservas reservaNueva=new Reservas();
+        reservaNueva.setUsuario(usuario);
+        reservaNueva.setEvento(evento);
+        reservaNueva.setFechareserva(reserva.getFechaReserva());
+        Reservas reservaGuardada=reServ.guardarReserva(reservaNueva);
+        
+        return new ReservasDTO(reservaGuardada);
+        
+        
     }
     
     
@@ -58,12 +76,16 @@ public class ReservasControlador {
     }
     
     @PutMapping("/reservas/{id}")
-    public ResponseEntity<ReservasDTO> editarReserva(@PathVariable int id,@RequestBody Reservas reservaObtenida){
+    public ResponseEntity<ReservasDTO> editarReserva(@PathVariable int id,@RequestBody ReservasDTO reservaObtenida){
         return reServ.buscarReservaPorId(id).map(reserva->{
-        reserva.setEvento(reservaObtenida.getEvento());
-        reserva.setFechareserva(reservaObtenida.getFechareserva());
-        Reservas actualizada=reServ.guardarReserva(reserva);
-        return ResponseEntity.ok(new ReservasDTO(actualizada));
+        Usuarios usuario=uServ.obtenerUsuarioPorId(reservaObtenida.getIdUsuario()).orElseThrow(()->new RuntimeException("No hay usuario en BD"));
+        Eventos evento=eveServ.buscarEventoPorId(reservaObtenida.getIdEvento()).orElseThrow(()-> new RuntimeException("No hay evento"));
+        reserva.setEvento(evento);
+        reserva.setUsuario(usuario);
+        reserva.setFechareserva(reservaObtenida.getFechaReserva());
+        
+        Reservas reservaGuardada=reServ.guardarReserva(reserva);
+        return ResponseEntity.ok(new ReservasDTO(reservaGuardada));
         }).orElse(ResponseEntity.notFound().build());
     }
     

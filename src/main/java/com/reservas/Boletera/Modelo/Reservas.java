@@ -33,15 +33,15 @@ import lombok.NoArgsConstructor;
 public class Reservas implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idreserva")
+    @Column(name="idreservas")
     private Integer idreserva;
     
     @ManyToOne
-    @JoinColumn(name="idusuario",nullable=false)
+    @JoinColumn(name="idusuarios",nullable=false)
     private Usuarios usuario;
     
     @ManyToOne
-    @JoinColumn(name="idevento",nullable=false)
+    @JoinColumn(name="ideventos",nullable=false)
     private Eventos evento;
     
     @Column(name="fechareserva",nullable=false)

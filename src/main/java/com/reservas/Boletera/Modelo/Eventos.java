@@ -31,8 +31,8 @@ import lombok.NoArgsConstructor;
 public class Eventos implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idevento")
-    private Integer idevento;
+    @Column(name="ideventos")
+    private int idevento;
     
     @NotBlank
     @Column(name="titulo")
